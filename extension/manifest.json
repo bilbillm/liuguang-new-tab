@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "流光新标签页",
+  "description": "在 Microsoft Edge 新标签页中浏览本地壁纸、搜索网页并打开常用网站。",
+  "version": "0.1.13",
+  "minimum_chrome_version": "120",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4dFv3kxhv7ml5z3m7go/Rlw0BTVFeFfutCnGj6SQOU4HTO8wxlieL+7kNwAlGB1z/xj5s+8hHuD/0USemPk9GvfCX3ufCbHMQZHqv/luj+pTX38Hc5aGshEpNMSeU18SU7SyE4wbqKdY0g2QCh1AyUVj+YnI7DShjlxTw+swxJdzX53UFAZyCK1Gvug4Qb/kSGRTtATZSgaD5ih2DIGpjN/Mc0G8mFEGrde3AlGD0Ktyiwd68zO8It2jUCzHv6+mqmNhY/yKA0tA0f2y+gtR+ClsG0L6yZFloqqdomXd+gaq7qF5OhKqrieUGyo9u8d80N4M2DF1+eNMs5ilGt7mcQIDAQAB",
+  "chrome_url_overrides": { "newtab": "newtab.html" },
+  "permissions": ["storage", "nativeMessaging"],
+  "background": { "service_worker": "background.js" }
+}

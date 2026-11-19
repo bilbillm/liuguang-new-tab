@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>新标签页</title>
+  <link rel="stylesheet" href="newtab.css">
+  <script src="newtab.js" type="module"></script>
+</head>
+<body>
+  <div id="wallpaper" class="wallpaper" aria-hidden="true">
+    <div class="wallpaper-art"><i></i><i></i><i></i></div>
+    <img id="wallpaper-image" alt="" hidden>
+    <video id="wallpaper-video" muted loop playsinline preload="metadata" hidden></video>
+    <canvas id="wallpaper-live" hidden></canvas>
+  </div>
+  <main>
+    <div id="search-area" class="search-area">
+      <div class="clock">
+        <time id="local-date"></time>
+        <time id="local-time"></time>
+      </div>
+      <form id="search-form" class="search glass" role="search">
+        <button id="engine-button" type="button" aria-label="选择搜索引擎" aria-controls="engine-menu" aria-expanded="false"><span id="engine-icon"></span><svg><use href="#chevron"/></svg></button>
+        <input id="query" type="search" aria-label="搜索网页" placeholder="搜索网页" autocomplete="off" spellcheck="false">
+        <button class="submit-search" type="submit" aria-label="搜索"><svg><use href="#search"/></svg></button>
+      </form>
+      <div id="engine-menu" class="engine-menu glass" role="group" aria-label="搜索引擎" inert>
+        <div id="engine-highlight" aria-hidden="true"></div>
+        <div id="engine-options"></div>
+      </div>
+    </div>
+    <button id="settings-button" class="settings-button glass" type="button" title="设置" aria-label="设置"><svg><use href="#settings"/></svg></button>
+    <nav id="dock" class="dock glass" aria-label="网站快捷栏"></nav>
+  </main>
+  <div id="dock-menu" class="dock-menu glass" role="menu" aria-label="快捷栏菜单" hidden></div>
+  <dialog id="settings-dialog" class="sheet" aria-labelledby="settings-title">
+    <div class="sheet-content">
+      <header class="sheet-header"><h1 id="settings-title">设置</h1><button class="icon-button" data-close type="button" aria-label="关闭设置"><svg><use href="#close"/></svg></button></header>
+      <nav id="settings-nav" class="sheet-nav" aria-label="设置分组">
+        <span class="sheet-nav-highlight" aria-hidden="true"></span>
+        <button type="button" data-pane="background" aria-pressed="true">背景</button>
+        <button type="button" data-pane="shortcuts" aria-pressed="false">快捷方式</button>
+        <button type="button" data-pane="search" aria-pressed="false">搜索</button>
+      </nav>
+      <div id="settings-panes" class="pane-stack">
+        <div class="pane-track">
+          <section id="pane-background" class="pane" aria-label="背景设置">
+            <div class="source-grid">
+              <button id="daily-button" class="source" type="button"><svg><use href="#sun"/></svg><span>每日一图</span></button>
+              <button id="image-button" class="source" type="button"><svg><use href="#image"/></svg><span>导入图片</span></button>
+              <button id="video-button" class="source" type="button"><svg><use href="#video"/></svg><span>导入视频</span></button>
+            </div>
+            <input id="image-file" type="file" accept="image/jpeg,image/png,image/webp,image/avif" hidden>
+            <input id="video-file" type="file" accept="video/mp4,video/webm,.mp4,.webm" hidden>
+            <div id="wallpaper-current" class="current"></div>
+            <div class="section-heading"><h2>Wallpaper Engine</h2><button id="refresh-library" type="button" class="text-button">刷新</button></div>
+            <p id="library-status" class="hint" role="status">正在检测本机安装…</p>
+            <div id="library-tools" hidden>
+              <input id="library-filter" type="search" placeholder="搜索本机壁纸" aria-label="搜索本机壁纸" autocomplete="off">
+              <div class="library-filters" aria-label="壁纸类型">
+                <button data-kind="all" type="button" aria-pressed="true">全部</button><button data-kind="scene" type="button" aria-pressed="false">场景</button><button data-kind="video" type="button" aria-pressed="false">视频</button><button data-kind="web" type="button" aria-pressed="false">网页</button>
+              </div>
+            </div>
+            <div id="library" class="library" aria-label="本机壁纸"></div>
+          </section>
+          <section id="pane-shortcuts" class="pane" aria-label="快捷方式设置" inert>
+            <h2>快捷栏外观</h2>
+            <div class="dock-controls">
+              <label for="dock-icon-size">图标大小</label>
+              <output id="dock-icon-size-value" for="dock-icon-size">46 px</output>
+              <input id="dock-icon-size" type="range" min="36" max="64" step="2" value="46">
+              <label for="dock-scale">快捷栏大小</label>
+              <output id="dock-scale-value" for="dock-scale">100%</output>
+              <input id="dock-scale" type="range" min="80" max="130" step="5" value="100">
+            </div>
+            <div class="section-heading"><h2>网站快捷方式</h2><button id="add-shortcut" class="text-button" type="button">添加</button></div>
+            <ul id="shortcut-list" class="items"></ul>
+            <form id="shortcut-form" class="editor" hidden>
+              <label>名称<input id="shortcut-name" maxlength="45" required></label>
+              <label>网站地址<input id="shortcut-url" type="text" placeholder="https://example.com" required></label>
+              <label>自定义图标（可选）<input id="shortcut-icon" type="file" accept="image/jpeg,image/png,image/webp,image/avif"></label>
+              <label id="clear-icon-row" class="check" hidden><input id="clear-icon" type="checkbox"> 使用自动图标</label>
+              <div class="editor-actions"><button id="cancel-shortcut" type="button">取消</button><button class="primary" type="submit">保存</button></div>
+            </form>
+          </section>
+          <section id="pane-search" class="pane" aria-label="搜索设置" inert>
+            <label>当前搜索引擎<select id="current-engine"></select></label>
+            <div class="section-heading"><h2>自定义搜索引擎</h2><button id="add-engine" class="text-button" type="button">添加</button></div>
+            <ul id="custom-engines" class="items"></ul>
+            <form id="engine-form" class="editor" hidden>
+              <label>名称<input id="custom-name" maxlength="35" required></label>
+              <label>搜索地址模板<input id="custom-url" type="text" placeholder="https://example.com/search?q={query}" required></label>
+              <p class="hint">用 <code>{query}</code> 标记搜索词的位置。</p>
+              <div class="editor-actions"><button id="cancel-engine" type="button">取消</button><button class="primary" type="submit">保存</button></div>
+            </form>
+          </section>
+        </div>
+      </div>
+      <div id="sheet-notice" class="notice" role="status" hidden></div>
+    </div>
+    <div id="settings-resize" class="sheet-resize" role="separator" aria-label="调整设置侧栏宽度" aria-orientation="vertical" aria-controls="settings-panes" tabindex="0" hidden></div>
+  </dialog>
+  <p id="toast" class="toast glass" role="status" hidden></p>
+  <svg class="symbols" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="search" viewBox="0 0 24 24"><circle cx="10.7" cy="10.7" r="6.7"/><path d="m16 16 4.1 4.1"/></symbol>
+    <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="open-tab" viewBox="0 0 24 24"><path d="M13 5h6v6m0-6-8 8m6 0v4a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h4"/></symbol>
+    <symbol id="edit" viewBox="0 0 24 24"><path d="m5 15-1 5 5-1L20 8l-4-4L5 15Zm9-9 4 4"/></symbol>
+    <symbol id="trash" viewBox="0 0 24 24"><path d="M4 7h16m-9 4v5m4-5v5M9 7V4h6v3m-9 0 1 13h10l1-13"/></symbol>
+    <symbol id="settings" viewBox="0 0 24 24"><path d="m10 3-.6 2.5-1.4.8-2.5-.8-2 3.5 1.9 1.7v1.6L3.5 14l2 3.5 2.5-.8 1.4.8.6 2.5h4l.6-2.5 1.4-.8 2.5.8 2-3.5-1.9-1.7v-1.6L20.5 9l-2-3.5-2.5.8-1.4-.8L14 3z" transform="translate(0 .5)"/><circle cx="12" cy="12" r="2.8"/></symbol>
+    <symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+    <symbol id="image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1"/></symbol>
+    <symbol id="video" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m10 9 5 3-5 3z"/></symbol>
+    <symbol id="globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18z"/></symbol>
+    <symbol id="arrow-up" viewBox="0 0 24 24"><path d="m6 12 6-6 6 6m-6-6v13"/></symbol>
+    <symbol id="arrow-down" viewBox="0 0 24 24"><path d="m6 12 6 6 6-6m-6 6V5"/></symbol>
+    <symbol id="google" viewBox="0 0 48 48" stroke="none"><path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.7-.4-4H24v7.6h11a9.4 9.4 0 0 1-4.1 6.1v5h6.6c3.8-3.5 6.1-8.6 6.1-14.7z"/><path fill="#34A853" d="M24 44c5.4 0 10-1.8 13.5-4.8l-6.6-5a12 12 0 0 1-18-6.3H6.1V33A20 20 0 0 0 24 44z"/><path fill="#FBBC05" d="M12.9 27.9a12 12 0 0 1 0-7.8V15H6.1a20 20 0 0 0 0 18z"/><path fill="#EA4335" d="M24 11.9a10.8 10.8 0 0 1 7.6 3l5.7-5.7A19 19 0 0 0 24 4 20 20 0 0 0 6.1 15l6.8 5.1A12 12 0 0 1 24 11.9z"/></symbol>
+    <symbol id="github" viewBox="0 0 24 24" stroke="none"><path fill="currentColor" d="M12 .9a11.2 11.2 0 0 0-3.5 21.8c.6.1.8-.2.8-.5v-2.1c-3.1.7-3.8-1.3-3.8-1.3-.5-1.3-1.2-1.6-1.2-1.6-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.5-.3-5.1-1.2-5.1-5.5 0-1.2.4-2.2 1.1-3-.1-.3-.5-1.4.1-2.9 0 0 .9-.3 3.1 1.1a10.7 10.7 0 0 1 5.6 0C17 5.3 18 5.6 18 5.6c.6 1.5.2 2.6.1 2.9.7.8 1.1 1.8 1.1 3 0 4.3-2.6 5.2-5.1 5.5.4.4.8 1.1.8 2.2v3c0 .3.2.7.8.5A11.2 11.2 0 0 0 12 .9z"/></symbol>
+    <symbol id="youtube" viewBox="0 0 24 24" stroke="none"><rect x="1" y="4.5" width="22" height="15" rx="4" fill="currentColor"/><path d="m10 8.7 6 3.3-6 3.3z" fill="#d01928"/></symbol>
+    <symbol id="music" viewBox="0 0 24 24"><path d="M10 17V6l10-2v11M10 8l10-2"/><ellipse cx="7" cy="17.5" rx="3" ry="2.4" fill="currentColor"/><ellipse cx="17" cy="15.5" rx="3" ry="2.4" fill="currentColor"/></symbol>
+    <symbol id="photos" viewBox="0 0 24 24" stroke="none"><circle cx="12" cy="7" r="5" fill="#ffbe3b"/><circle cx="17" cy="12" r="5" fill="#f67a75"/><circle cx="12" cy="17" r="5" fill="#6f87ef"/><circle cx="7" cy="12" r="5" fill="#77c891"/><circle cx="12" cy="12" r="3" fill="#fff3e3"/></symbol>
+  </svg>
+</body>
+</html>

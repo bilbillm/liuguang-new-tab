@@ -1,0 +1,10 @@
+companion/bin/
+companion/obj/
+companion/runtime/
+dist/
+预览-壁纸侧栏.png
+预览-液态动效.gif
+*.user
+*.suo
+Thumbs.db
+.DS_Store
