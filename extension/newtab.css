@@ -197,8 +197,8 @@ body:has(.sheet[open]) .settings-button { opacity: 0; }
   margin: 0;
   padding: 5px;
   border-radius: 17px;
-  animation: dock-menu-spread 230ms cubic-bezier(.24, .7, .3, 1);
 }
+.dock-menu[inert] { pointer-events: none; }
 .dock-menu > button {
   display: flex;
   align-items: center;
@@ -213,18 +213,6 @@ body:has(.sheet[open]) .settings-button { opacity: 0; }
 .dock-menu > button:is(:hover, :focus-visible) { background: #e8d9ff25; outline-offset: -2px; }
 .dock-menu > [data-remove] { color: #ffe0e4; }
 .dock-menu svg { width: 17px; height: 17px; }
-@keyframes dock-menu-spread {
-  from {
-    clip-path: inset(
-      calc(var(--menu-y) - 3px)
-      calc(100% - var(--menu-x) - 3px)
-      calc(100% - var(--menu-y) - 3px)
-      calc(var(--menu-x) - 3px) round 50%);
-    opacity: .55;
-  }
-  to { clip-path: inset(0 round 17px); opacity: 1; }
-}
-
 .sheet {
   --sheet-gutter: clamp(8px, 2.5vw, 14px);
   --sheet-min-width: 320px;

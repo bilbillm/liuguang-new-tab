@@ -10,8 +10,8 @@
 
 | 文件 | 适用场景 |
 | --- | --- |
-| `liuguang-edge-0.1.13.zip` | 新标签页、搜索、快捷栏、每日一图和本机图片或视频。 |
-| `liuguang-edge-0.1.13-windows-x64.zip` | 需要额外接入本机 Wallpaper Engine 库。包含同一个扩展、Windows x64 伴侣和注册脚本。 |
+| `liuguang-edge-0.1.14.zip` | 新标签页、搜索、快捷栏、每日一图和本机图片或视频。 |
+| `liuguang-edge-0.1.14-windows-x64.zip` | 需要额外接入本机 Wallpaper Engine 库。包含同一个扩展、Windows x64 伴侣和注册脚本。 |
 | `SHA256SUMS.txt` | 核对下载文件的 SHA-256 校验值。 |
 
 GitHub 的 **Source code** 是源码快照。普通安装请选择上表的 ZIP 发行包。

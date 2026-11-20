@@ -37,6 +37,7 @@ let libraryColumns = 0;
 let clockTimer;
 let dockDrag;
 let dockMenuOrigin;
+let dockMenuAnimation;
 let dockScrollFrame = 0;
 let suppressDockClick = false;
 let shortcutExit;
@@ -498,17 +499,32 @@ function dockLinks() {
 }
 
 function closeDockMenu(restoreFocus = false) {
-  if (dockMenu.hidden) return;
-  dockMenu.hidden = true;
-  if (restoreFocus) dockMenuOrigin?.focus({ preventScroll: true });
+  if (dockMenu.hidden || dockMenu.inert) return;
+  const origin = dockMenuOrigin;
   dockMenuOrigin = undefined;
+  dockMenu.inert = true;
+  if (restoreFocus) origin?.focus({ preventScroll: true });
+  const animation = dockMenuAnimation;
+  if (!animation?.currentTime || motion.matches) {
+    hideDockMenu();
+    return;
+  }
+  animation.reverse();
+  animation.updatePlaybackRate(-1.3);
+  animation.finished.then(() => {
+    if (dockMenuAnimation === animation) hideDockMenu();
+  }, () => {});
+}
+
+function hideDockMenu() {
+  dockMenu.hidden = true;
+  dockMenuAnimation?.cancel();
+  dockMenuAnimation = undefined;
 }
 
 function showDockMenu(x, y, origin) {
   stopDockDrag();
-  closeDockMenu();
-  // Commit the hidden state before reopening at a different pointer position.
-  if (dockMenu.childElementCount) dockMenu.getBoundingClientRect();
+  hideDockMenu();
   dockMenuOrigin = origin;
   const item = dockEntries.get(origin);
   const action = (label, symbol, run) => {
@@ -534,14 +550,24 @@ function showDockMenu(x, y, origin) {
     dockMenu.replaceChildren(action('添加快捷方式', 'plus', () => openShortcutEditor()));
   }
   dockMenu.hidden = false;
+  dockMenu.inert = false;
   const width = dockMenu.offsetWidth;
   const height = dockMenu.offsetHeight;
   const left = Math.max(8, Math.min(innerWidth - width - 8, x - width / 2));
   const top = Math.max(8, Math.min(innerHeight - height - 8, y - height / 2));
   dockMenu.style.left = `${left}px`;
   dockMenu.style.top = `${top}px`;
-  dockMenu.style.setProperty('--menu-x', `${Math.max(0, Math.min(width, x - left))}px`);
-  dockMenu.style.setProperty('--menu-y', `${Math.max(0, Math.min(height, y - top))}px`);
+  if (!motion.matches) {
+    const menuX = Math.max(0, Math.min(width, x - left));
+    const menuY = Math.max(0, Math.min(height, y - top));
+    dockMenuAnimation = dockMenu.animate([
+      {
+        clipPath: `inset(${menuY - 3}px ${width - menuX - 3}px ${height - menuY - 3}px ${menuX - 3}px round 50%)`,
+        opacity: .55
+      },
+      { clipPath: 'inset(0 round 17px)', opacity: 1 }
+    ], { duration: 230, easing: 'cubic-bezier(.24, .7, .3, 1)', fill: 'both' });
+  }
   dockMenu.firstElementChild.focus({ preventScroll: true });
 }
 
